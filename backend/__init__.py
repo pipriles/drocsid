@@ -1,11 +1,26 @@
+#!/usr/bin/env python3
+
+import redis
 import os
 
-from flask import Flask
+from flask import Flask, request, session
 from flask_socketio import SocketIO, emit
 
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB   = 0
+
+def init_redis():
+    return redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+
 def create_app():
+
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.urandom(24).hex()
+
+    rd = init_redis()
+    print(rd)
+    rd.set('EPA', None)
     socketio = SocketIO(app)
 
     @app.route('/')
@@ -16,11 +31,12 @@ def create_app():
     @app.route('/login', methods=['POST'])
     def login():
         # Validate user login against redis
-        pass
+        username = request.json['username']
+        return { 'id': username }
 
     @app.route('/register', methods=['POST'])
-    def login():
-        # Register user
+    def register():
+        # Register user 
         pass
 
     @app.route('/messages')
@@ -34,5 +50,5 @@ def create_app():
         # Add message to list on redis
         pass
 
-    return socketio
+    return app, socketio
 
