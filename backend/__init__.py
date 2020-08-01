@@ -6,7 +6,7 @@ import os
 from flask import Flask, request, session
 from flask_socketio import SocketIO, emit
 
-REDIS_HOST = 'localhost'
+REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
 REDIS_PORT = 6379
 REDIS_DB   = 0
 
@@ -19,8 +19,6 @@ def create_app():
     app.config['SECRET_KEY'] = os.urandom(24).hex()
 
     rd = init_redis()
-    print(rd)
-    rd.set('EPA', None)
     socketio = SocketIO(app)
 
     @app.route('/')
