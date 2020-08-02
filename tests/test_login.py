@@ -5,6 +5,7 @@ def test_login(client):
     resp = client.post('/login', json=data)
     data = resp.json
 
-    print(data)
+    with client.session_transaction() as session:
+        assert session['username'] == 'hellokitty'
 
     assert data['id'] == 'hellokitty'

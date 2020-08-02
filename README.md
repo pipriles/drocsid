@@ -15,3 +15,6 @@ python -m pytest
 - [ ] Use Redis Publish/Subscribe system
 - [ ] Create simple frontend
 - [ ] Implement tests
+- [ ] Add password to Redis?
+- [ ] Add `.dockerignore`
+- [ ] User aiohttp and asyncio?
