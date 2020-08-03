@@ -4,7 +4,12 @@ import socketio
 import requests as rq
 import re
 import io
+import os
 import csv
+
+CHAT_HOST = os.environ.get('HOST', 'localhost')
+CHAT_PORT = os.environ.get('PORT', 5000)
+CHAT_URI  = 'http://{}:{}'.format(CHAT_HOST, CHAT_PORT)
 
 sio = socketio.Client()
 
@@ -67,6 +72,7 @@ def disconnect():
 
 if __name__ == '__main__':
     # Get hostname and port from env
-    sio.connect('http://localhost:5000', namespaces=['/bot'])
+    print('Connecting to', CHAT_URI)
+    sio.connect(CHAT_URI, namespaces=['/bot'])
     sio.wait()
 

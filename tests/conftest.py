@@ -11,6 +11,7 @@ def redis():
     redis = backend.init_redis()
     redis.flushall()
     yield redis
+    redis.flushall()
 
 @pytest.fixture(scope='session')
 def _create_app():

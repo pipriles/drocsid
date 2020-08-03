@@ -5,7 +5,7 @@ import os
 import json
 import uuid
 
-from flask import Flask, request, session, jsonify, render_template, redirect, url_for
+from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape
 from flask_socketio import SocketIO, emit, send, disconnect
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -20,7 +20,6 @@ def init_redis():
 def fetch_messages(r):
     chat = r.lrange('chat', 0, 49)
     return [ json.loads(msg.decode('utf8')) for msg in chat ]
-
 
 def create_app():
 
@@ -63,6 +62,11 @@ def create_app():
         messages = reversed(messages)
         
         return render_template('index.html', messages=messages)
+
+    @app.route('/exit')
+    def exit_chat():
+        session.clear()
+        return redirect(url_for('index'))
 
     @app.route('/join', methods=('GET', 'POST'))
     def join():
@@ -142,14 +146,6 @@ def create_app():
     @socketio.on('json', namespace='/chat')
     def on_message(message):
 
-        # sanitize messages
-
-        # Verify message username matches session username
-        # if 'username' not in session \
-        # or session['username'] == message.get('username'):
-        #     print('Username does not match!')
-        #     return
-
         # Verify username (is valid and logged)
         if not is_authenticated():
             disconnect()
@@ -157,6 +153,9 @@ def create_app():
 
         message['id'] = str(uuid.uuid4())
         message['username'] = session.get('username')
+
+        # Sanitize messages (We don't trust the user)
+        message['message'] = escape(message['message']) 
 
         if message['type'] == 'message':
             # Store on redis if it is only a message

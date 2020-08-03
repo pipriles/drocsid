@@ -19,12 +19,14 @@ python -m pytest
 - [x] Implement login funcionality
 - [x] Implement simple login view
 - [x] Add `base.html` template
+- [x] Migrate Dockerfiles base image to alpine
 - [ ] Implement bot authorization token
 - [ ] Implement join a room funcionality
 - [ ] Implement tests
 - [ ] Add docker volume to template and static files
 - [ ] Setup development workflow
 - [ ] Implement user is typing feature
+- [ ] Show current users
 - [ ] Implement Redis Flask extension
 - [ ] Support ASCII art
 - [ ] Use Redis Publish/Subscribe system?
