@@ -4,10 +4,19 @@
 
   let form = document.getElementById('chat-box')
   form.addEventListener('submit', function(event) {
+
     event.preventDefault();
+
     let input = document.getElementById('message');
     var mesg  = input.value
-    socket.emit('json', { type: 'message', message: mesg });
+
+    var payload = { };
+
+    /* if value starts with '/' then is a command */
+    payload['type'] = mesg.startsWith('/') ? 'command': 'message';
+    payload['message'] = mesg;
+
+    socket.emit('json', payload);
   });
 
   socket.on('connect', function() {

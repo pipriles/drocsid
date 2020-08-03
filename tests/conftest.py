@@ -1,4 +1,6 @@
 import backend
+import bot
+
 import pytest
 import os
 

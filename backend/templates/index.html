@@ -10,9 +10,9 @@
 
   <ul id="chat">
   {% for msg in messages %}
-    
     {% set username = 'anonymous' if not msg['username'] else msg['username'] %}
-    <li>{{ username }}: {{ msg['message'] }}</li>
+    {% set message  = msg['message'] %}
+    <li>{{ username }}: {{ message }}</li>
   {% endfor %}
   </ul>
 

@@ -12,16 +12,19 @@ python -m pytest
 
 ## TODO
 
-- [x] Add Dockerfile and `docker-compose.yml`
+- [x] Setup docker for deployment
 - [x] Add `.dockerignore`
-- [ ] Create simple frontend
-- [ ] Implement Redis Flask extension
-- [ ] Add `base.html` template
-- [ ] Implement simple decoupled bot
+- [x] Create simple chat frontend
+- [x] Implement simple decoupled bot
 - [ ] Implement login funcionality
+- [ ] Implement simple login view
+- [ ] Add `base.html` template
 - [ ] Implement tests
 - [ ] Add docker volume to template and static files
 - [ ] Setup development workflow
+- [ ] Implement user is typing feature
+- [ ] Implement Redis Flask extension
+- [ ] Support ASCII art
 - [ ] Use Redis Publish/Subscribe system?
 - [ ] Add password to Redis?
 - [ ] Add redis connection mockup?

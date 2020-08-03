@@ -17,7 +17,7 @@ def init_redis():
     return redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
 
 def fetch_messages(r):
-    chat = r.lrange('chat', 0, 50)
+    chat = r.lrange('chat', 0, 49)
     return [ json.loads(msg.decode('utf8')) for msg in chat ]
 
 def create_app():
@@ -69,7 +69,7 @@ def create_app():
     @app.route('/messages')
     def messages():
         # Fetch messages from redis 
-        chat = rd.lrange('chat', 0, 50)
+        chat = rd.lrange('chat', 0, 49)
         decoded = [ json.loads(msg.decode('utf8')) for msg in chat ]
 
         # reverse order and filter commands?
@@ -97,14 +97,9 @@ def create_app():
         #     print('Username does not match!')
         #     return
 
-
         if message['type'] == 'message':
             message['id'] = str(uuid.uuid4())
             rd.lpush('chat', json.dumps(message))
-
-        elif message['type'] != 'command':
-            print('Unsupported type message', message['type'])
-            return
 
         print(message)
         socketio.emit('message', message)
