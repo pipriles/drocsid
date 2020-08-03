@@ -11,6 +11,8 @@ CHAT_HOST = os.environ.get('HOST', 'localhost')
 CHAT_PORT = os.environ.get('PORT', 5000)
 CHAT_URI  = 'http://{}:{}'.format(CHAT_HOST, CHAT_PORT)
 
+BOT_TOKEN = os.environ.get('BOT_TOKEN', '38f51666d5dffdb15fc06d1ef4dfd0c1ccd1a8daed2b3312')
+
 sio = socketio.Client()
 
 API_URL = 'https://stooq.com/q/l/'
@@ -30,13 +32,13 @@ def send_quotes(stock):
     for row in reader:
 
         quote = '{} quote is ${} per share'.format(row['Symbol'], row['Close'])
-        sio.emit('json', {'type': 'message', 'message': quote })
+        sio.emit('json', {'type': 'message', 'message': quote }, namespace='/bot')
 
 def parse_command(command):
 
     match = re.search(r'/(\w+)\s*=?\s*([\w\.]+)?', command)
-    cmd = match.group(1)
-    arg = match.group(2)
+    cmd = match.group(1) if match else None
+    arg = match.group(2) if match else None
 
     return cmd, arg
 
@@ -44,7 +46,7 @@ def parse_command(command):
 def connect():
     print('Connection Established.')
 
-@sio.event
+@sio.event(namespace='/bot')
 def message(data):
 
     if data['type'] == 'command':
@@ -59,7 +61,7 @@ def message(data):
             return
 
         if code is None:
-            sio.emit('json', { 'type': 'misc', 'message': 'Did you misspelled something?'})
+            sio.emit('json', { 'type': 'misc', 'message': 'Did you miss something?'}, namespace='/bot')
             return
 
         # Fetch stock CSV data
@@ -73,6 +75,7 @@ def disconnect():
 if __name__ == '__main__':
     # Get hostname and port from env
     print('Connecting to', CHAT_URI)
-    sio.connect(CHAT_URI, namespaces=['/bot'])
+    headers = {'Authorization': 'BotToken ' + BOT_TOKEN } 
+    sio.connect(CHAT_URI, headers=headers, namespaces=['/bot'])
     sio.wait()
 

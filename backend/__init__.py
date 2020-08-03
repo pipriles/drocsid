@@ -4,8 +4,9 @@ import redis
 import os
 import json
 import uuid
+import re
 
-from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape
+from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape, current_app
 from flask_socketio import SocketIO, emit, send, disconnect
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -25,25 +26,10 @@ def create_app():
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.urandom(24).hex()
+    app.config['BOT_TOKEN'] = os.environ.get('BOT_TOKEN', '38f51666d5dffdb15fc06d1ef4dfd0c1ccd1a8daed2b3312')
 
     rd = init_redis()
     socketio = SocketIO(app)
-
-    # def on_publish(message):
-    #     data = message['data']
-    #     post = json.loads(data.decode('utf8'))
-    #     print('[REDIS]', post)
-    #     socketio.send(post, json=True)
-
-    # p = rd.pubsub()
-    # p.subscribe(**{REDIS_CHANNEL: on_publish})
-    # thread = p.run_in_thread(sleep_time=0.001)
-
-    # def teardown_redis(exception):
-    #     print('STOP!')
-    #     thread.stop()
-
-    # app.teardown_appcontext(teardown_redis)
 
     def is_authenticated():
         username = session.get('username')
@@ -117,10 +103,19 @@ def create_app():
     @socketio.on('connect')
     def on_connect():
 
-        print('CONNECTED!', session.get('username'))
+        print('Client connected.', session.get('username'))
+
+        auth = request.headers.get('Authorization')
+
+        if auth is not None:
+            match = re.match('BotToken (\w+)', auth)
+            token = match.group(1) if match else None
+
+            if current_app.config['BOT_TOKEN'] == token: 
+                return
 
         if not is_authenticated():
-            print('DISCONNECTED!')
+            print('Client disconnected.')
             disconnect()
 
     @socketio.on('connect', namespace='/bot')
@@ -130,6 +125,21 @@ def create_app():
         print('Bot connected')
         print(request.remote_addr, request.host)
         print(session)
+    
+    @socketio.on('json', namespace='/bot')
+    def on_bot_message(message):
+
+        message['id'] = str(uuid.uuid4())
+        message['username'] = 'bot'
+
+        # Sanitize messages (We don't trust the user)
+        message['message'] = escape(message['message']) 
+
+        if message['type'] == 'message':
+            # Store on redis if it is only a message
+            rd.lpush('chat', json.dumps(message))
+
+        socketio.emit('message', message, namespace='/chat')
 
     @socketio.on('connect', namespace='/chat')
     def on_user_connect():
@@ -144,7 +154,7 @@ def create_app():
             print('Someone has joined the chat...', repr(user))
 
     @socketio.on('json', namespace='/chat')
-    def on_message(message):
+    def on_user_message(message):
 
         # Verify username (is valid and logged)
         if not is_authenticated():
