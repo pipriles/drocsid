@@ -20,11 +20,22 @@ API_URL = 'https://stooq.com/q/l/'
 def fetch_stock(code):
 
     params = { 's': code, 'h': True, 'e': 'csv' }
-    resp = rq.get(API_URL, params=params)
+
+    try:
+        resp = rq.get(API_URL, params=params)
+        print(resp.status_code)
+        resp.raise_for_status()
+
+    except Exception as e:
+        return None
 
     return resp.text
 
 def send_quotes(stock):
+
+    if stock is None:
+        sio.emit('json', {'type': 'misc', 'message': 'Could not fetch stock...' }, namespace='/bot')
+        return
 
     f = io.StringIO(stock)
     reader = csv.DictReader(f)

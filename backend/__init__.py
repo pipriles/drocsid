@@ -22,6 +22,16 @@ def fetch_messages(r):
     chat = r.lrange('chat', 0, 49)
     return [ json.loads(msg.decode('utf8')) for msg in chat ]
 
+def has_bot_token():
+
+    auth = request.headers.get('Authorization')
+    if auth is None: return False
+
+    match = re.match('BotToken (\w+)', auth)
+    token = match.group(1) if match else None
+
+    return current_app.config['BOT_TOKEN'] == token
+
 def create_app():
 
     app = Flask(__name__)
@@ -105,16 +115,9 @@ def create_app():
 
         print('Client connected.', session.get('username'))
 
-        auth = request.headers.get('Authorization')
+        if  not has_bot_token() \
+        and not is_authenticated():
 
-        if auth is not None:
-            match = re.match('BotToken (\w+)', auth)
-            token = match.group(1) if match else None
-
-            if current_app.config['BOT_TOKEN'] == token: 
-                return
-
-        if not is_authenticated():
             print('Client disconnected.')
             disconnect()
 
@@ -122,9 +125,11 @@ def create_app():
     def on_bot_connect():
         # Verify user is authenticated
         # so he can not listen the chat
-        print('Bot connected')
-        print(request.remote_addr, request.host)
-        print(session)
+        print('Bot connected.')
+
+        if not has_bot_token():
+            print('Bot disconnected.')
+            disconnect()
     
     @socketio.on('json', namespace='/bot')
     def on_bot_message(message):
