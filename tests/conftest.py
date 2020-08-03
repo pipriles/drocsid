@@ -4,6 +4,8 @@ import bot
 import pytest
 import os
 
+from  werkzeug.security import check_password_hash, generate_password_hash
+
 @pytest.fixture
 def redis():
     redis = backend.init_redis()
@@ -42,18 +44,28 @@ def client(app):
         yield client
 
 @pytest.fixture
-def client1(app, socketio):
+def client1(app, socketio, redis):
+
+    username = os.urandom(4).hex()
+    password = os.urandom(4).hex()
+
+    redis.hset('users', username, generate_password_hash(password))
 
     with app.test_client() as client:
         with client.session_transaction() as session:
-            session['username'] = os.urandom(4).hex()
-        yield socketio.test_client(app, flask_test_client=client)
+            session['username'] = username
+        yield socketio.test_client(app, namespace='/chat', flask_test_client=client)
 
 @pytest.fixture
-def client2(app, socketio):
+def client2(app, socketio, redis):
+
+    username = os.urandom(4).hex()
+    password = os.urandom(4).hex()
+
+    redis.hset('users', username, generate_password_hash(password))
 
     with app.test_client() as client:
         with client.session_transaction() as session:
-            session['username'] = os.urandom(4).hex()
-        yield socketio.test_client(app, flask_test_client=client)
+            session['username'] = username
+        yield socketio.test_client(app, namespace='/chat', flask_test_client=client)
 

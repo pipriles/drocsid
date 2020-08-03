@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+{% block body %}
+<form action="/join" method="POST">
+  <input name="username" placeholder="Username" type="text" />
+  <input name="password" placeholder="Password" type="password" />
+  <input type="submit" value="Join" />
+</form>
+{% if error %}
+  <span class="error">{{ error }}</span>
+{% endif %}
+{% endblock %}
+

@@ -1,6 +1,6 @@
 (function () {
 
-  var socket = io()
+  var socket = io('/chat')
 
   let form = document.getElementById('chat-box')
   form.addEventListener('submit', function(event) {
@@ -15,6 +15,8 @@
     /* if value starts with '/' then is a command */
     payload['type'] = mesg.startsWith('/') ? 'command': 'message';
     payload['message'] = mesg;
+
+    input.value = '';
 
     socket.emit('json', payload);
   });

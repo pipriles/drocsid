@@ -67,6 +67,6 @@ def disconnect():
 
 if __name__ == '__main__':
     # Get hostname and port from env
-    sio.connect('http://localhost:5000')
+    sio.connect('http://localhost:5000', namespaces=['/bot'])
     sio.wait()
 

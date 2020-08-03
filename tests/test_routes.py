@@ -1,16 +1,13 @@
 
-def test_index_route(client):
+def test_index_redirect(client):
 
     resp = client.get('/')
-    assert resp.status_code == 200
-    print(resp.data)
+    assert resp.status_code == 302 # Should redirect user to login
 
 def test_get_messages(redis, client, client1):
 
-    client1.send({ 'type': 'message', 'message': 'Hello' }, json=True)
-    client1.send({ 'type': 'message', 'message': 'How are you?' }, json=True)
-
-    recv = client1.get_received()
+    client1.send({ 'type': 'message', 'message': 'Hello' }, json=True, namespace='/chat')
+    client1.send({ 'type': 'message', 'message': 'How are you?' }, json=True, namespace='/chat')
 
     resp = client.get('/messages')
     msgs = resp.json

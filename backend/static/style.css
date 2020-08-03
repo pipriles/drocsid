@@ -1,0 +1,12 @@
+.error {
+  display: block;
+  white-space: break-spaces;
+  color: red;
+  margin-top: 8px;
+}
+
+form > input:not([type="submit"]) {
+  display: block;
+  margin-bottom: 8px;
+}
+

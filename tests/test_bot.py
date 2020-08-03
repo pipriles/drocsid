@@ -10,6 +10,7 @@ def test_fetch_api():
     reader = csv.DictReader(f)
 
     for row in reader:
+
         assert row['Symbol'] == 'AAPL.US'
         assert 'Close' in row
 
