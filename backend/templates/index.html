@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat app</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h4>Messages</h4>
+
+  <ul id="chat">
+  {% for msg in messages %}
+    
+    {% set username = 'anonymous' if not msg['username'] else msg['username'] %}
+    <li>{{ username }}: {{ msg['message'] }}</li>
+  {% endfor %}
+  </ul>
+
+  <form id="chat-box" action="#">
+    <input id="message" type="text" name="message" />
+  </form>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha512-v8ng/uGxkge3d1IJuEo6dJP8JViyvms0cly9pnbfRxT6/31c3dRWxIiwGnMSWwZjHKOuY3EVmijs7k1jz/9bLA==" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='index.js') }}"></script>
+</body>
+</html>
+

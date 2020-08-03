@@ -5,7 +5,7 @@ import os
 import json
 import uuid
 
-from flask import Flask, request, session, jsonify
+from flask import Flask, request, session, jsonify, render_template
 from flask_socketio import SocketIO, emit, send
 
 REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
@@ -15,6 +15,10 @@ REDIS_CHANNEL = 'chat'
 
 def init_redis():
     return redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+
+def fetch_messages(r):
+    chat = r.lrange('chat', 0, 50)
+    return [ json.loads(msg.decode('utf8')) for msg in chat ]
 
 def create_app():
 
@@ -41,9 +45,13 @@ def create_app():
     # app.teardown_appcontext(teardown_redis)
 
     @app.route('/')
+    @app.route('/index')
     def index():
         # Show app homepage
-        pass
+        # if not session redirect to login page
+        messages = fetch_messages(rd)
+        messages = reversed(messages)
+        return render_template('index.html', messages=messages)
 
     @app.route('/login', methods=['POST'])
     def login():
@@ -54,7 +62,8 @@ def create_app():
 
     @app.route('/register', methods=['POST'])
     def register():
-        # Register user 
+        # Store user on redis database
+        # encrypt password using werkzeug
         pass
 
     @app.route('/messages')
@@ -70,7 +79,7 @@ def create_app():
     def on_connect():
         # Verify user is authenticated
         # so he can not listen the chat
-        pass
+        print('Someone connected...')
 
     @socketio.on('json')
     def on_message(message):
@@ -80,12 +89,14 @@ def create_app():
         # Validate keys are present
         # type and username
         # sanitize messages
+        # do not store on redis if message is a command
 
         # Verify message username matches session username
-        if 'username' not in session \
-        or session['username'] == message.get('username'):
-            print('Username does not match!')
-            return
+        # if 'username' not in session \
+        # or session['username'] == message.get('username'):
+        #     print('Username does not match!')
+        #     return
+
 
         if message['type'] == 'message':
             message['id'] = str(uuid.uuid4())
@@ -95,7 +106,8 @@ def create_app():
             print('Unsupported type message', message['type'])
             return
 
-        socketio.send(message, json=True)
+        print(message)
+        socketio.emit('message', message)
 
     return app, socketio
 

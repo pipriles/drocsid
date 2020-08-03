@@ -1,4 +1,10 @@
 
+def test_index_route(client):
+
+    resp = client.get('/')
+    assert resp.status_code == 200
+    print(resp.data)
+
 def test_get_messages(redis, client, client1):
 
     client1.send({ 'type': 'message', 'message': 'Hello' }, json=True)
