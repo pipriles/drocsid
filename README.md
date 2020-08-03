@@ -16,9 +16,11 @@ python -m pytest
 - [x] Add `.dockerignore`
 - [x] Create simple chat frontend
 - [x] Implement simple decoupled bot
-- [ ] Implement login funcionality
-- [ ] Implement simple login view
-- [ ] Add `base.html` template
+- [x] Implement login funcionality
+- [x] Implement simple login view
+- [x] Add `base.html` template
+- [ ] Implement bot authorization token
+- [ ] Implement join a room funcionality
 - [ ] Implement tests
 - [ ] Add docker volume to template and static files
 - [ ] Setup development workflow
