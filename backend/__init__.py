@@ -36,7 +36,7 @@ def create_app():
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.urandom(24).hex()
-    app.config['BOT_TOKEN'] = os.environ.get('BOT_TOKEN', '38f51666d5dffdb15fc06d1ef4dfd0c1ccd1a8daed2b3312')
+    app.config['BOT_TOKEN']  = os.environ.get('BOT_TOKEN', '38f51666d5dffdb15fc06d1ef4dfd0c1ccd1a8daed2b3312')
 
     rd = init_redis()
     socketio = SocketIO(app)

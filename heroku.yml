@@ -1,0 +1,7 @@
+build:
+  docker:
+    chat: Dockerfile
+    bot: Dockerfile-bot
+    redis: redis:alpine
+  config:
+    PORT: 80
