@@ -1,8 +1,9 @@
-FROM python:3.5-alpine
+FROM python:3.8-alpine
 
 COPY requirements.txt .
  
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev linux-headers \
+RUN apk update \
+    && apk add --no-cache --virtual .build-deps gcc musl-dev linux-headers \
     && pip install --no-cache-dir -r requirements.txt \
     && apk del .build-deps gcc musl-dev linux-headers
 
@@ -15,4 +16,4 @@ EXPOSE 5000
 ENV PORT 5000
 ENV REDIS_HOST redis
 
-CMD gunicorn -b 0.0.0.0:$PORT -k eventlet -w 1 wsgi:app
+CMD python wsgi.py
