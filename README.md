@@ -42,6 +42,7 @@ python -m pytest
 - [ ] Use flask blueprints
 - [ ] Implement user is typing feature
 - [ ] Show current users
+- [ ] Run app as non root inside container
 - [ ] Support ASCII art
 - [ ] Use Redis Publish/Subscribe system?
 - [ ] Add password to Redis?

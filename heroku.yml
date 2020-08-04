@@ -1,7 +1,10 @@
+setup:
+  addons:
+    - plan: heroku-redis
+      as: redis
 build:
   docker:
-    chat: Dockerfile
-    bot: Dockerfile-bot
-    redis: redis:alpine
+    web: Dockerfile
+    worker: Dockerfile-bot
   config:
     PORT: 80
