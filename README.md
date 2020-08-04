@@ -37,8 +37,9 @@ python -m pytest
 - [x] Add `base.html` template
 - [x] Migrate Dockerfiles base image to alpine
 - [x] Implement bot authorization token
-- [ ] Implement more tests
 - [ ] Implement join a room funcionality
+- [ ] Add more styles
+- [ ] Implement more tests
 - [ ] Use flask blueprints
 - [ ] Implement user is typing feature
 - [ ] Show current users
