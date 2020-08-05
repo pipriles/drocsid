@@ -26,3 +26,21 @@ def test_multiple_clients(app, socketio, redis, client1, client2):
     assert recv[0]['args']['type']    == 'message'
     assert recv[0]['args']['message'] == 'from_client_1'
 
+def test_join_room(app, socketio, client1, client2):
+
+    client1.emit('join', { 'room': 'room1' }, namespace='/chat')
+    client1.send({ 'type': 'message', 'message': 'foobar' }     , json=True, namespace='/chat')
+
+    # Wait until received
+    recv = client2.get_received('/chat')
+
+    assert not recv
+
+    client2.emit('join', { 'room': 'room1' }, namespace='/chat')
+    client1.send({ 'type': 'message', 'message': 'foobar' }, json=True, namespace='/chat')
+
+    recv = client2.get_received('/chat')
+
+    assert len(recv) == 2
+    assert recv[1]['args']['message'] == 'foobar'
+

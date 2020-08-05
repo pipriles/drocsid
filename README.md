@@ -18,6 +18,8 @@ To run the application without docker you will need to have python 3 and install
 
 To start the server you do `python3 wsgi.py` and to run the bot `python3 bot.py`.
 
+At first all users are connected to the `global` room, you can go to a different chat room by doing `/join ROOM`.
+
 ## Tests
 
 To run the tests you will need pytest.
@@ -37,7 +39,8 @@ python -m pytest
 - [x] Add `base.html` template
 - [x] Migrate Dockerfiles base image to alpine
 - [x] Implement bot authorization token
-- [ ] Implement join a room funcionality
+- [x] Implement join a room funcionality
+- [ ] Improve code structure
 - [ ] Add more styles
 - [ ] Implement more tests
 - [ ] Use flask blueprints
