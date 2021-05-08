@@ -1,5 +1,5 @@
 redis==3.5.3
-eventlet==0.26.1
+eventlet==0.31.0
 python-socketio==4.6.0
 Werkzeug==1.0.1
 Flask==1.1.2
